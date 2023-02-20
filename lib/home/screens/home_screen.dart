@@ -1,4 +1,7 @@
+import 'package:counter_bloc_app/home/bloc/home_bloc.dart';
+import 'package:counter_bloc_app/home/bloc/home_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -7,7 +10,11 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          context.read<HomeBloc>().add(
+                IncrementEvent(),
+              );
+        },
         child: const Icon(
           Icons.add,
         ),
@@ -17,10 +24,18 @@ class HomeScreen extends StatelessWidget {
           'Counter App',
         ),
       ),
-      body: const Center(
-        child: Text(
-          '0',
-          style: TextStyle(fontSize: 30),
+      body: Center(
+        child: BlocBuilder<HomeBloc, HomeState>(
+          //BLoC Builder is called as many times as we emit
+          builder: (context, state) {
+            if (state.status == HomeStatus.loading) {
+              return const CircularProgressIndicator();
+            }
+            return Text(
+              state.counter.toString(),
+              style: const TextStyle(fontSize: 30),
+            );
+          },
         ),
       ),
     );
